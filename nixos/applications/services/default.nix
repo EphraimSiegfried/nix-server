@@ -1,8 +1,7 @@
 {
   imports = [
+    ./monitoring
     # ./nixarr.nix
-    ./grafana
-    ./prometheus.nix
     # ./homepage.nix
     # ./jellyseerr.nix
     # ./adguardhome.nix
