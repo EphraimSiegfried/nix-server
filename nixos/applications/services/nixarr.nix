@@ -1,5 +1,7 @@
 { config, ... }:
 {
+
+  sops.secrets."wg-conf" = { };
   nixarr = {
     enable = true;
     mediaDir = "${config.data_dir}/media";
@@ -7,8 +9,9 @@
 
     vpn = {
       enable = true;
-      #TODO:put into sops
-      wgConf = "/wg.conf";
+      wgConf = config.sops.secrets."wg-conf".path;
+      vpnTestService.enable = true;
+      vpnTestService.port = 56056;
     };
 
     jellyfin = {
@@ -20,7 +23,7 @@
       enable = true;
       vpn.enable = true;
       openFirewall = true;
-      peerPort = 23182;
+      peerPort = 56056;
       flood.enable = true;
     };
 

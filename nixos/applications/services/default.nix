@@ -1,7 +1,7 @@
 {
   imports = [
     ./monitoring
-    # ./nixarr.nix
+    ./nixarr.nix
     # ./homepage.nix
     # ./jellyseerr.nix
     # ./adguardhome.nix
