@@ -1,6 +1,7 @@
 {
   imports = [
     ./monitoring
+    ./media
     ./nixarr.nix
     # ./homepage.nix
     # ./jellyseerr.nix

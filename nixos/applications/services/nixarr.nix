@@ -11,7 +11,7 @@
       enable = true;
       wgConf = config.sops.secrets."wg-conf".path;
       vpnTestService.enable = true;
-      vpnTestService.port = 56056;
+      vpnTestService.port = 2819;
     };
 
     jellyfin = {
@@ -23,7 +23,7 @@
       enable = true;
       vpn.enable = true;
       openFirewall = true;
-      peerPort = 56056;
+      peerPort = 2819;
       flood.enable = true;
     };
 
@@ -43,6 +43,7 @@
       recommendedProxySettings = true;
     };
   };
+
   services.nginx.virtualHosts."prowlarr.${config.domain}" = {
     useACMEHost = config.domain;
     forceSSL = true;
