@@ -5,7 +5,7 @@ let
 in
 {
   services.jellyseerr = {
-    enable = false;
+    enable = true;
     openFirewall = true;
     port = port;
   };
