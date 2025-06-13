@@ -17,7 +17,7 @@ in
   };
 
   services.nginx.virtualHosts."${subdomain}.${config.domain}" = {
-    enableACME = true;
+    useACMEHost = config.domain;
     forceSSL = true;
     locations."/" = {
       proxyPass = "http://127.0.0.1:${toString 8002}";
