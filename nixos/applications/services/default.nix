@@ -3,7 +3,7 @@
     ./monitoring
     ./media
     ./vaultwarden.nix
-    # ./homepage.nix
+    ./homepage.nix
     # ./jellyseerr.nix
     # ./adguardhome.nix
     # ./plik.nix

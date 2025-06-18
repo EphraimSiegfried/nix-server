@@ -1,61 +1,54 @@
-{ config, ... }: {
+{ config, ... }:
+{
   services.homepage-dashboard = {
     enable = true;
     listenPort = 8082;
-    settings = {
-      background = {
-        image = "https://i.redd.it/vvq3pmz35pea1.jpg";
-        blur = "md";
-
-      };
-    };
+    allowedHosts = config.domain;
     services = [
       {
-        "Media" =
-          [
-            {
-              "Jellyfin" = {
-                href = "https://jelly.${config.domain}";
-                icon = "jellyfin";
-              };
-            }
-            {
-              "Jellyseerr" = {
-                href = "https://js.${config.domain}";
-                icon = "jellyseerr";
-              };
-            }
-            {
-              "Radarr" = {
-                href = "https://radarr.${config.domain}";
-                icon = "radarr";
-              };
-            }
-            {
-              "Sonarr" = {
-                href = "https://sonarr.${config.domain}";
-                icon = "sonarr";
-              };
-            }
-            {
-              "Prowlarr" = {
-                href = "https://prowlarr.${config.domain}";
-                icon = "prowlarr";
-              };
-            }
-          ];
+        "Media" = [
+          {
+            "Jellyfin" = {
+              href = "https://jelly.${config.domain}";
+              icon = "jellyfin";
+            };
+          }
+          {
+            "Jellyseerr" = {
+              href = "https://js.${config.domain}";
+              icon = "jellyseerr";
+            };
+          }
+          {
+            "Radarr" = {
+              href = "https://radarr.${config.domain}";
+              icon = "radarr";
+            };
+          }
+          {
+            "Sonarr" = {
+              href = "https://sonarr.${config.domain}";
+              icon = "sonarr";
+            };
+          }
+          {
+            "Prowlarr" = {
+              href = "https://prowlarr.${config.domain}";
+              icon = "prowlarr";
+            };
+          }
+        ];
 
       }
       {
-        "Monitoring" =
-          [
-            {
-              "Grafana" = {
-                href = "https://grafana.${config.domain}";
-                icon = "grafana";
-              };
-            }
-          ];
+        "Monitoring" = [
+          {
+            "Grafana" = {
+              href = "https://grafana.${config.domain}";
+              icon = "grafana";
+            };
+          }
+        ];
 
       }
 
