@@ -64,6 +64,13 @@
 
         "Cloud" = [
           {
+            "Nextcloud" = {
+              href = "https://cloud.${config.domain}";
+              icon = "nextcloud";
+              description = "File storage and more";
+            };
+          }
+          {
             "Vaultwarden" = {
               href = "https://vw.${config.domain}";
               icon = "vaultwarden";
