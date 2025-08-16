@@ -13,6 +13,7 @@
       openFirewall = true;
       peerPort = 2819;
       flood.enable = true;
+      uiPort = 9812;
     };
   };
 }
