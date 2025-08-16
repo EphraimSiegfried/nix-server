@@ -8,6 +8,7 @@ in
     enable = true;
     openFirewall = true;
   };
+  networking.firewall.allowedTCPPorts = [ port ];
 
   services.nginx.virtualHosts."${subdomain}.${config.domain}" = {
     useACMEHost = config.domain;
@@ -24,7 +25,7 @@ in
   nixpkgs.config.packageOverrides = pkgs: {
     vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
   };
-  hardware= {
+  hardware = {
     graphics = {
       enable = true;
       extraPackages = with pkgs; [
