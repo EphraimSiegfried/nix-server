@@ -13,7 +13,7 @@
       openFirewall = true;
       peerPort = 2819;
       flood.enable = true;
-      uiPort = 9812;
+      uiPort = 9091; # standard port for transmission
     };
   };
 }
