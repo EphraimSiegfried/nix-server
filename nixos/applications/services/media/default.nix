@@ -7,6 +7,7 @@
     ./prowlarr.nix
     ./jellyfin.nix
     ./jellyseerr.nix
+    ./bazarr.nix
   ];
 
   nixarr = {
