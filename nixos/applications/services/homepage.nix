@@ -57,6 +57,13 @@
               description = "Indexer manager for Radarr, Sonarr, and others.";
             };
           }
+          {
+            "Bazarr" = {
+              href = "https://bazarr.${config.domain}";
+              icon = "bazarr";
+              description = "Subtitle downloader and manager for Radarr and Sonarr.";
+            };
+          }
         ];
 
       }
