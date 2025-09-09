@@ -6,8 +6,8 @@
     ./homepage.nix
     ./nextcloud.nix
     ./paperless.nix
+    ./mealie.nix
     # ./adguardhome.nix
     # ./plik.nix
-    # ./mealie.nix
   ];
 }

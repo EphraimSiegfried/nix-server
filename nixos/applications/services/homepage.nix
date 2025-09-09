@@ -92,6 +92,14 @@
             };
 
           }
+          {
+            "Mealie" = {
+              href = "https://mealie.${config.domain}";
+              icon = "mealie";
+              description = "Recipe management app";
+            };
+
+          }
         ];
 
       }
