@@ -82,8 +82,15 @@
               href = "https://vw.${config.domain}";
               icon = "vaultwarden";
               description = "Password manager compatible with Bitwarden clients";
-
             };
+          }
+          {
+            "Paperless" = {
+              href = "https://paperless.${config.domain}";
+              icon = "paperless-ngx";
+              description = "Document management system that transforms physical documents into a searchable online archive";
+            };
+
           }
         ];
 
