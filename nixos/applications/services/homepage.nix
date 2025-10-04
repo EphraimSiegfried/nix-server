@@ -120,7 +120,7 @@
       {
         resources = {
           cpu = true;
-          disk = "/media";
+          disk = "/";
           memory = true;
         };
       }

@@ -12,7 +12,7 @@
 
   nixarr = {
     enable = true;
-    mediaDir = "${config.data_dir}/media";
+    mediaDir = "${config.media_dir}";
     stateDir = "${config.data_dir}/media/.state/nixarr";
   };
 }
