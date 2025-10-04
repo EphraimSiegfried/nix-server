@@ -54,10 +54,12 @@
   time.timeZone = "Europe/Zurich";
   i18n.defaultLocale = "en_US.UTF-8";
   environment.systemPackages = with pkgs; [
+    btrfs-progs
+    curl
+    git
+    lf
     man-pages
     neovim
-    git
-    curl
   ];
   programs.zsh.enable = true;
   system.stateVersion = "23.11";
