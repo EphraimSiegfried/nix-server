@@ -1,5 +1,6 @@
 { config, ... }:
 {
+  systemd.services.homepage-dashboard.serviceConfig.PrivateMounts = false;
   services.homepage-dashboard = {
     enable = true;
     listenPort = 8082;
