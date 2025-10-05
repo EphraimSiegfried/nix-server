@@ -7,6 +7,7 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
     nixarr.url = "github:rasmus-kirk/nixarr";
+    lunch-basel.url = "github:EphraimSiegfried/lunch-basel";
   };
 
   outputs =
@@ -22,6 +23,7 @@
           modules = [
             inputs.disko.nixosModules.disko
             inputs.nixarr.nixosModules.default
+            inputs.lunch-basel.nixosModules.default
             ./nixos
           ];
         };
