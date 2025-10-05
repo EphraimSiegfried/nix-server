@@ -45,6 +45,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  virtualisation.docker.enable = true;
+
   nixpkgs = {
     config = {
       allowUnfree = true;
