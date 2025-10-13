@@ -1,7 +1,32 @@
-{ config, ... }:
+{ pkgs, lib, config, ... }:
 {
   services.homepage-dashboard = {
     enable = true;
+    # NOTE: This can be removed once the path bug is fixed upstream:
+    # https://github.com/NixOS/nixpkgs/pull/453314
+    package = pkgs.homepage-dashboard.overrideAttrs (oldAttrs: rec {
+      installPhase = ''
+        runHook preInstall
+
+        mkdir -p $out/{bin,share}
+        cp -r .next/standalone $out/share/homepage/
+        cp -r public $out/share/homepage/public
+        chmod +x $out/share/homepage/server.js
+
+        mkdir -p $out/share/homepage/.next
+        cp -r .next/static $out/share/homepage/.next/static
+
+        makeWrapper "${lib.getExe pkgs.nodejs}" $out/bin/homepage \
+          --set-default PORT 3000 \
+          --set-default HOMEPAGE_CONFIG_DIR /var/lib/homepage-dashboard \
+          --set-default NIXPKGS_HOMEPAGE_CACHE_DIR /var/cache/homepage-dashboard \
+          --add-flags "$out/share/homepage/server.js" \
+          --prefix : PATH "${lib.makeBinPath [ pkgs.unixtools.ping ]}"
+
+        runHook postInstall
+      '';
+    });
+
     listenPort = 8082;
     allowedHosts = config.domain;
     settings = {
