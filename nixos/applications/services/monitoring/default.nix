@@ -4,5 +4,6 @@
     ./prometheus.nix
     ./promtail.nix
     ./loki.nix
+    ./alertmanager
   ];
 }

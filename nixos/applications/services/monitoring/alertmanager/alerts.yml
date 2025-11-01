@@ -9,3 +9,27 @@ groups:
         annotations:
           summary: "Node Exporter down"
           description: "Node Exporter has been down for more than 1 minute."
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 20
+        for: 1s
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 90% for more than 5 minutes on instance {{ $labels.instance }}."
+      - alert: HighMemoryUsage
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High Memory usage detected"
+          description: "Available memory is less than 10% for more than 5 minutes on instance {{ $labels.instance }}."
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs"} - node_filesystem_free_bytes{fstype!~"tmpfs|fuse.lxcfs"}) / node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs"} * 100 > 80
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High Disk usage detected"
+          description: "Disk usage is above 80% for more than 10 minutes on instance {{ $labels.instance }}."

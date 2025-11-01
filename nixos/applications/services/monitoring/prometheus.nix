@@ -3,6 +3,7 @@
   services.prometheus = {
     enable = true;
     port = 9001;
+    checkConfig = true;
     exporters = {
       node = {
         enable = true;
