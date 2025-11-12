@@ -8,6 +8,7 @@
     ./paperless.nix
     ./mealie.nix
     ./lunch-basel.nix
+    ./mysql.nix
     # ./adguardhome.nix
     # ./plik.nix
   ];
