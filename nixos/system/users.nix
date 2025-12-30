@@ -1,5 +1,9 @@
 { pkgs, ... }:
 {
+  nix.settings.trusted-users = [
+    "root"
+    "siegi"
+  ];
 
   users.users = {
     siegi = {
