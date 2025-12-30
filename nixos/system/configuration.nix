@@ -16,6 +16,7 @@
     ./sops.nix
     ./ssh-server.nix
     ./networking.nix
+    ./auto-upgrades.nix
   ];
 
   nix =
