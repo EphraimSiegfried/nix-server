@@ -4,6 +4,7 @@
   nixarr = {
     vpn = {
       enable = true;
+      vpnTestService.enable = true;
       wgConf = config.sops.secrets."wg-conf".path;
     };
 
