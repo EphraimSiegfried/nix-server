@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   services.homepage-dashboard = {
     enable = true;
@@ -124,6 +129,11 @@
               description = "Recipe management app";
             };
 
+            "Docuseal" = {
+              href = "https://docuseal.${config.domain}";
+              icon = "docuseal";
+              description = "Sign PDF";
+            };
           }
         ];
 
