@@ -17,8 +17,4 @@
       uiPort = 9091; # standard port for transmission
     };
   };
-  systemd.services.transmission = {
-    after = [ "wg.service" "network-online.target" ];
-    wants = [ "network-online.target" ];
-  };
 }
