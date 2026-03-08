@@ -15,6 +15,10 @@
       peerPort = 2819;
       flood.enable = true;
       uiPort = 9091; # standard port for transmission
+      extraSettings = {
+        ratio-limit-enabled = true;
+        ratio-limit = 0;
+      };
     };
   };
   systemd.services.wg.serviceConfig = {
