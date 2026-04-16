@@ -69,6 +69,13 @@
               description = "Subtitle downloader and manager for Radarr and Sonarr.";
             };
           }
+          {
+            "Audiobookshelf" = {
+              href = "https://abs.${config.domain}";
+              icon = "audiobookshelf";
+              description = "Media manager for audiobooks and podcasts";
+            };
+          }
         ];
 
       }

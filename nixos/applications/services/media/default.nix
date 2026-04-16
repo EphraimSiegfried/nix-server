@@ -8,6 +8,7 @@
     ./jellyfin.nix
     ./jellyseerr.nix
     ./bazarr.nix
+    ./audiobookshelf.nix
   ];
 
   nixarr = {
