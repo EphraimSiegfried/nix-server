@@ -9,6 +9,7 @@ in
     openFirewall = true;
   };
 
+  systemd.services.radarr.serviceConfig.UMask = "0002";
   services.nginx.virtualHosts."${subdomain}.${config.domain}" = {
     useACMEHost = config.domain;
     forceSSL = true;

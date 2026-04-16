@@ -8,7 +8,7 @@ in
     enable = true;
     openFirewall = true;
   };
-
+  systemd.services.sonarr.serviceConfig.UMask = "0002";
   services.nginx.virtualHosts."${subdomain}.${config.domain}" = {
     useACMEHost = config.domain;
     forceSSL = true;
