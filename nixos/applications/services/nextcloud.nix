@@ -30,4 +30,5 @@ in
       proxyWebsockets = true;
     };
   };
+  sops.secrets."admin-pw" = { };
 }

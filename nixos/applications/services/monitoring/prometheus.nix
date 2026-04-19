@@ -3,6 +3,12 @@
   services.prometheus = {
     enable = true;
     port = 9001;
+    remoteWrite = [
+      {
+        # TODO: Don't hardcode o11y url
+        url = "http://10.100.0.1:9001/api/v1/write";
+      }
+    ];
     exporters = {
       node = {
         enable = true;
@@ -17,6 +23,9 @@
         static_configs = [
           {
             targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
+            labels = {
+              instance = "${config.networking.hostName}";
+            };
           }
         ];
       }

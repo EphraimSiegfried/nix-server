@@ -12,7 +12,8 @@
       };
       clients = [
         {
-          url = "http://127.0.0.1:${toString config.services.loki.configuration.server.http_listen_port}/loki/api/v1/push";
+          # TODO: don't hardcode o11y url
+          url = "http://10.100.0.1:3030/loki/api/v1/push";
         }
       ];
       scrape_configs = [
