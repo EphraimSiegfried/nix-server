@@ -123,6 +123,13 @@
       {
         "Monitoring" = [
           {
+            "Gatus" = {
+              href = "https://health.${config.domain}";
+              icon = "gatus";
+              description = "Check the health of our services";
+            };
+          }
+          {
             "Grafana" = {
               href = "https://grafana.${config.domain}";
               icon = "grafana";
