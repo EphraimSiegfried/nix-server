@@ -7,8 +7,6 @@
         "siegi"
       ];
       programs.zsh.enable = true;
-      # TODO: Please remove once done
-      services.getty.autologinUser = "root";
 
       users.users = {
         zenoli = {
