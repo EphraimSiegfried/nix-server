@@ -12,6 +12,7 @@ in
       ./_hardware-configuration.nix
       bootloader
       nix
+      secrets
       siegi
       zenoli
       {
