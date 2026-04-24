@@ -23,6 +23,7 @@ in
         {
           services.getty.autologinUser = "root";
           virtualisation.vmVariant.virtualisation.graphics = false;
+          programs.bash.shellAliases.off = "poweroff";
         }
       ];
     };
