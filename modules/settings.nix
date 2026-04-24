@@ -1,19 +1,5 @@
 { lib, ... }:
 let
-  adminOpts =
-    { ... }:
-    {
-      options = {
-        name = lib.mkOption {
-          type = lib.types.str;
-          default = "zeus";
-        };
-        email = lib.mkOption {
-          type = lib.types.str;
-          default = "ephraim.siegfried@proton.me";
-        };
-      };
-    };
   serviceOpts =
     { ... }:
     {
@@ -28,19 +14,43 @@ let
     };
 in
 {
-  flake.modules.nixos.config = {
+  flake.modules.nixos.settings = with lib.types; {
     options = {
-      admin = lib.mkOption {
-        type = lib.types.submodule adminOpts;
-        default = { };
+      admin = {
+        name = lib.mkOption {
+          type = str;
+        };
+        passwordFile = lib.mkOption {
+          type = path;
+        };
+        email = lib.mkOption {
+          type = str;
+        };
       };
       domain = lib.mkOption {
-        type = lib.types.str;
-        default = "qew.ch";
+        type = str;
       };
       myServices = lib.mkOption {
-        type = lib.types.attrsOf (lib.types.submodule serviceOpts);
+        type = attrsOf (submodule serviceOpts);
         default = { };
+      };
+      locations = lib.mkOption {
+        type = attrsOf str;
+        default = { };
+      };
+    };
+    config = {
+      sops.secrets."admin-pw" = { };
+      admin = {
+        name = lib.mkDefault "zeus";
+        email = lib.mkDefault "ephraim.siegfried@proton.me";
+        passwordFile = config.sops.secrets."admin-pw".path;
+      };
+      domain = lib.mkDefault "qew.ch";
+      locations = {
+        data = lib.mkDefault "/data";
+        media = lib.mkDefault "/media";
+        state = lib.mkDefault "/state";
       };
     };
   };

@@ -13,6 +13,7 @@ in
       bootloader
       nix
       secrets
+      settings
       siegi
       zenoli
       {
