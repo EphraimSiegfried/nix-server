@@ -19,6 +19,7 @@ in
       modules = with inputs.self.modules.nixos; [
         siegi
         zenoli
+        nix
         {
           system.stateVersion = "25.11";
           networking.hostName = hostname;
