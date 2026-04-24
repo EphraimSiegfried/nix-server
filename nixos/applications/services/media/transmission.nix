@@ -22,7 +22,7 @@
     };
   };
   systemd.services.wg.serviceConfig = {
-    # Hack to avoid a race condition where wg tried to read the wireguard entpoint 
+    # Hack to avoid a race condition where wg tried to read the wireguard entpoint
     # `nl3.vpn.airdns.org` before the network is up and running.
     # This is not a proper fix but good enough for now.
     ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";

@@ -6,6 +6,7 @@
         "root"
         "siegi"
       ];
+      programs.zsh.enable = true;
 
       users.users = {
         siegi = {

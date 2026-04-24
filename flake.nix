@@ -4,6 +4,11 @@
   inputs = {
     nixpkgs_unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    import-tree.url = "github:vic/import-tree";
 
     disko = {
       url = "github:nix-community/disko";
@@ -18,6 +23,5 @@
     sops-nix.url = "github:Mic92/sops-nix";
     lunch-basel.url = "github:EphraimSiegfried/lunch-basel";
   };
-
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }
