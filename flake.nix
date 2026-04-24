@@ -19,24 +19,5 @@
     lunch-basel.url = "github:EphraimSiegfried/lunch-basel";
   };
 
-  outputs =
-    { self, nixpkgs, ... }@inputs:
-    let
-      inherit (self) outputs;
-    in
-    {
-      nixosConfigurations = {
-        ares = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs outputs; };
-          system = "x86_64-linux";
-          modules = [
-            inputs.disko.nixosModules.disko
-            inputs.nixarr.nixosModules.default
-            inputs.lunch-basel.nixosModules.default
-            ./nixos
-          ];
-        };
-      };
-
-    };
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }
