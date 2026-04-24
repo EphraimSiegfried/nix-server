@@ -10,9 +10,10 @@ in
   flake.modules.nixos.${hostname} = {
     imports = with self.modules.nixos; [
       ./_hardware-configuration.nix
+      bootloader
+      nix
       siegi
       zenoli
-      bootloader
       {
         system.stateVersion = "25.11";
         networking.hostName = hostname;
