@@ -12,6 +12,7 @@ in
       ./_hardware-configuration.nix
       siegi
       zenoli
+      bootloader
       {
         system.stateVersion = "25.11";
         networking.hostName = hostname;
