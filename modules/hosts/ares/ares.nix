@@ -16,6 +16,7 @@
           ./_hardware-configuration.nix
           siegi
           zenoli
+          ssh-server
           {
             system.stateVersion = "25.11";
             networking.hostName = hostname;
