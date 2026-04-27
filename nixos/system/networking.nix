@@ -12,7 +12,7 @@
       ];
     };
   };
-  networking.wireguard.interfaces.wg0 = {
+  networking.wireguard.interfaces.olly-siegi-vpn = {
     ips = [ "10.100.0.2/24" ];
 
     privateKeyFile = config.sops.secrets."wireguard/private_key".path;
