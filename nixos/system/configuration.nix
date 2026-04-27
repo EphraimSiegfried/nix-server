@@ -25,7 +25,7 @@
     in
     {
       settings = {
-        experimental-features = "nix-command flakes";
+        experimental-features = "nix-command flakes pipe-operators";
         # disable global registry
         flake-registry = "";
         # Workaround for https://github.com/NixOS/nix/issues/9574
