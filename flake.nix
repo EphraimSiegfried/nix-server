@@ -17,6 +17,7 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     lunch-basel.url = "github:EphraimSiegfried/lunch-basel";
+    libix.url = "github:EphraimSiegfried/libix";
 
     nur-ephraim.url = "github:EphraimSiegfried/nur-packages/bindery";
   };

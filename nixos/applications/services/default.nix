@@ -11,5 +11,6 @@
     ./docuseal.nix
     # ./adguardhome.nix
     # ./plik.nix
+    ./libix.nix
   ];
 }

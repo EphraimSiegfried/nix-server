@@ -76,6 +76,12 @@
               description = "Media manager for audiobooks and podcasts";
             };
           }
+          {
+            "Libix" = {
+              href = "https://libix.${config.domain}";
+              description = "Audiobook downloader";
+            };
+          }
         ];
 
       }
