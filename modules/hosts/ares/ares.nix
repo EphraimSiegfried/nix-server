@@ -12,6 +12,7 @@ in
       ./_hardware-configuration.nix
       bootloader
       nextcloud
+      vaultwarden
       nix
       networking
       secrets
