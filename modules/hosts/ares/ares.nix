@@ -12,8 +12,10 @@ in
       ./_hardware-configuration.nix
       bootloader
       nix
+      networking
       secrets
       settings
+      ssh
       siegi
       zenoli
       {
