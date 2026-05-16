@@ -11,7 +11,12 @@ in
     imports = with self.modules.nixos; [
       ./_hardware-configuration.nix
       bootloader
+      docuseal
+      homepage
+      jellyseerr
+      mealie
       nextcloud
+      paperless
       vaultwarden
       nix
       networking

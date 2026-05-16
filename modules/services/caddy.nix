@@ -8,8 +8,13 @@
       ...
     }:
     let
+      mkHostname = svc:
+        if svc.subdomain == "@" then
+          config.domain
+        else
+          "${svc.subdomain}.${config.domain}";
       mkVhost = _name: svc: {
-        "${svc.subdomain}.${config.domain}" = {
+        "${mkHostname svc}" = {
           extraConfig =
             lib.optionalString (!useTLS) "tls internal\n"
             + "reverse_proxy http://localhost:${toString svc.port}";

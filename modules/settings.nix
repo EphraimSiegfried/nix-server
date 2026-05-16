@@ -10,6 +10,18 @@ let
         port = lib.mkOption {
           type = lib.types.int;
         };
+        icon = lib.mkOption {
+          type = lib.types.str;
+          default = "";
+        };
+        description = lib.mkOption {
+          type = lib.types.str;
+          default = "";
+        };
+        category = lib.mkOption {
+          type = lib.types.str;
+          default = "Services";
+        };
       };
     };
 in
@@ -32,6 +44,10 @@ in
         };
         domain = lib.mkOption {
           type = str;
+        };
+        baseURL = lib.mkOption {
+          type = str;
+          default = "https://${config.domain}";
         };
         webServices = lib.mkOption {
           type = attrsOf (submodule serviceOpts);

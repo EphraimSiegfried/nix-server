@@ -32,9 +32,11 @@ in
           };
 
           domain = "localhost";
+          baseURL = "https://localhost:8443";
           services.getty.autologinUser = "root";
           virtualisation.vmVariant = {
             virtualisation.graphics = false;
+            virtualisation.memorySize = 4096;
             virtualisation.forwardPorts = [
               {
                 from = "host";
