@@ -8,7 +8,7 @@
       categories = lib.groupBy (svc: svc.category) (lib.attrValues config.webServices);
 
       mkServiceEntry = svc: {
-        ${svc.description} = {
+        ${svc.name} = {
           href =
             if svc.subdomain == "@" then
               config.baseURL
@@ -30,9 +30,9 @@
     in
     {
       webServices.homepage = {
+        name = "Homepage";
         subdomain = "@";
         inherit port;
-        icon = "homepage";
         description = "Dashboard";
       };
 

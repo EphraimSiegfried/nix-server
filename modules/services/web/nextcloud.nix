@@ -11,8 +11,9 @@
     in
     {
       webServices.nextcloud = {
-        inherit subdomain port;
-        icon = "nextcloud";
+        name = "Nextcloud";
+        subdomain = subdomain;
+        inherit port;
         description = "File storage and more";
         category = "Cloud";
       };

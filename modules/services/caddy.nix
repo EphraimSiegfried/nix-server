@@ -61,13 +61,13 @@
           environmentFile = config.sops.templates."caddy.env".path;
         };
 
-        sops.secrets."cloudflare/api_token" = {
+        sops.secrets."cloudflare/api-key" = {
           owner = config.systemd.services.caddy.serviceConfig.User;
         };
         sops.templates."caddy.env" = {
           owner = config.systemd.services.caddy.serviceConfig.User;
           content = ''
-            CLOUDFLARE_API_TOKEN=${config.sops.placeholder."cloudflare/api_token"}
+            CLOUDFLARE_API_TOKEN=${config.sops.placeholder."cloudflare/api-key"}
           '';
         };
       })

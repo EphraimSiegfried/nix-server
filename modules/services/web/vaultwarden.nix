@@ -7,8 +7,9 @@
     in
     {
       webServices.vaultwarden = {
-        inherit subdomain port;
-        icon = "vaultwarden";
+        name = "Vaultwarden";
+        subdomain = subdomain;
+        inherit port;
         description = "Password manager compatible with Bitwarden clients";
         category = "Cloud";
       };

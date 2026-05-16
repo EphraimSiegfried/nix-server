@@ -11,12 +11,23 @@ in
     imports = with self.modules.nixos; [
       ./_hardware-configuration.nix
       bootloader
+      audiobookshelf
+      bazarr
       docuseal
       homepage
+      jellyfin
       jellyseerr
+      libix
+      media
       mealie
       nextcloud
+      prowlarr
+      radarr
+      sonarr
+      transmission
       paperless
+      prometheus
+      promtail
       vaultwarden
       nix
       networking
@@ -26,9 +37,10 @@ in
       siegi
       zenoli
       {
-        system.stateVersion = "25.11";
+        system.stateVersion = "23.11";
         networking.hostName = hostname;
         time.timeZone = "Europe/Zurich";
+        i18n.defaultLocale = "en_US.UTF-8";
       }
     ];
   };

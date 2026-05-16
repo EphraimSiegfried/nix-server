@@ -1,18 +1,22 @@
 { lib, ... }:
 let
   serviceOpts =
-    { ... }:
+    { config, ... }:
     {
       options = {
+        name = lib.mkOption {
+          type = lib.types.str;
+        };
         subdomain = lib.mkOption {
           type = lib.types.str;
+          default = lib.toLower config.name;
         };
         port = lib.mkOption {
           type = lib.types.int;
         };
         icon = lib.mkOption {
           type = lib.types.str;
-          default = "";
+          default = lib.toLower config.name;
         };
         description = lib.mkOption {
           type = lib.types.str;

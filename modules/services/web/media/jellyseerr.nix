@@ -7,8 +7,9 @@
     in
     {
       webServices.jellyseerr = {
-        inherit subdomain port;
-        icon = "jellyseerr";
+        name = "Jellyseerr";
+        subdomain = subdomain;
+        inherit port;
         description = "Request interface for movies and shows in Jellyfin";
         category = "Media";
       };
