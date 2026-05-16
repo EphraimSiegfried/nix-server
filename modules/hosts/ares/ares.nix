@@ -11,6 +11,7 @@ in
     imports = with self.modules.nixos; [
       ./_hardware-configuration.nix
       bootloader
+      nextcloud
       nix
       networking
       secrets
