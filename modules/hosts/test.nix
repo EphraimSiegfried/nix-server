@@ -19,19 +19,35 @@ in
           programs.bash.shellAliases.off = "poweroff";
           sops.defaultSopsFile = "${inputs.self}/secrets/secrets-test.yaml";
           sops.age.keyFile = "/var/lib/age/test-key.txt";
+          sops.age.sshKeyPaths = [ ];
+          sops.gnupg.sshKeyPaths = [ ];
 
+          system.activationScripts.setup-test-key = {
+            deps = [ "specialfs" ];
+            text = ''
+              mkdir -p /var/lib/age
+              cp ${inputs.self}/secrets/test-key.txt /var/lib/age/test-key.txt
+              chmod 0640 /var/lib/age/test-key.txt
+            '';
+          };
+
+          domain = "localhost";
           services.getty.autologinUser = "root";
           virtualisation.vmVariant = {
             virtualisation.graphics = false;
-            virtualisation.sharedDirectories.secrets = {
-              source = "${inputs.self}/secrets";
-              target = "/mnt/secrets";
-            };
+            virtualisation.forwardPorts = [
+              {
+                from = "host";
+                host.port = 8080;
+                guest.port = 80;
+              }
+              {
+                from = "host";
+                host.port = 8443;
+                guest.port = 443;
+              }
+            ];
           };
-
-          systemd.tmpfiles.rules = [
-            "C /var/lib/age/test-key.txt - - - - /mnt/secrets/test-key.txt"
-          ];
         }
       ];
     };
