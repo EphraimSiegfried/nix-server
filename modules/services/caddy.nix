@@ -24,7 +24,22 @@
         ];
         services.caddy = {
           enable = true;
-          virtualHosts = lib.mkMerge (lib.mapAttrsToList mkVhost config.webServices);
+          virtualHosts = lib.mkMerge (
+            lib.mapAttrsToList mkVhost config.webServices
+            ++ [
+              {
+                "*.${config.domain}" = {
+                  extraConfig =
+                    lib.optionalString (!useTLS) "tls internal\n"
+                    + ''
+                      root * ${./web/notfound}
+                      try_files {path} /index.html
+                      file_server
+                    '';
+                };
+              }
+            ]
+          );
         };
       }
       (lib.mkIf useTLS {
