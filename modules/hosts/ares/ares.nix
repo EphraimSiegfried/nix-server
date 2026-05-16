@@ -21,13 +21,17 @@ in
       {
         system.stateVersion = "25.11";
         networking.hostName = hostname;
+        time.timeZone = "Europe/Zurich";
       }
     ];
   };
   flake.nixosConfigurations = {
     ${hostname} = inputs.nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = with self.modules.nixos; [ ares ];
+      modules = with self.modules.nixos; [
+        ares
+        (self.factory.caddy { })
+      ];
     };
   };
 }

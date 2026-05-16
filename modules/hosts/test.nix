@@ -8,13 +8,13 @@ in
     {
       packages.${hostname} = self.nixosConfigurations.${hostname}.config.system.build.vm;
       packages.default = self'.packages.${hostname};
-
     };
   flake.nixosConfigurations = {
     ${hostname} = inputs.nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = with self.modules.nixos; [
         ares
+        (self.factory.caddy { useTLS = false; })
         {
           programs.bash.shellAliases.off = "poweroff";
           sops.defaultSopsFile = "${inputs.self}/secrets/secrets-test.yaml";
