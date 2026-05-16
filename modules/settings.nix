@@ -14,7 +14,7 @@ let
     };
 in
 {
-  flake.modules.nixos.settings = with lib.types; {
+  flake.modules.nixos.settings = { config, ... }: with lib.types; {
     options = {
       admin = {
         name = lib.mkOption {
