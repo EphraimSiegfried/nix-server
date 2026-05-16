@@ -3,6 +3,7 @@
   flake.modules.nixos.secrets =
     {
       pkgs,
+      lib,
       config,
       ...
     }:
@@ -23,9 +24,9 @@
       ];
 
       sops = {
-        defaultSopsFile = ../secrets/secrets.yaml;
+        defaultSopsFile = lib.mkDefault ../secrets/secrets.yaml;
         defaultSopsFormat = "yaml";
-        age.keyFile = "/var/lib/age/keys.txt";
+        age.keyFile = lib.mkDefault "/var/lib/age/keys.txt";
       };
     };
 }
