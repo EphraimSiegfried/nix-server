@@ -14,6 +14,7 @@ in
       audiobookshelf
       bazarr
       docuseal
+      external
       homepage
       jellyfin
       jellyseerr

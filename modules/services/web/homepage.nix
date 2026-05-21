@@ -7,18 +7,22 @@
       # Group services by category
       categories = lib.groupBy (svc: svc.category) (lib.attrValues config.webServices);
 
+      mkHref = svc:
+        if svc.external then
+          "https://${svc.subdomain}.${config.domain}"
+        else if svc.subdomain == "@" then
+          config.baseURL
+        else
+          let
+            parts = lib.splitString "://" config.baseURL;
+            scheme = builtins.head parts;
+            rest = builtins.elemAt parts 1;
+          in
+          "${scheme}://${svc.subdomain}.${rest}";
+
       mkServiceEntry = svc: {
         ${svc.name} = {
-          href =
-            if svc.subdomain == "@" then
-              config.baseURL
-            else
-              let
-                parts = lib.splitString "://" config.baseURL;
-                scheme = builtins.head parts;
-                rest = builtins.elemAt parts 1;
-              in
-              "${scheme}://${svc.subdomain}.${rest}";
+          href = mkHref svc;
           icon = svc.icon;
           description = svc.description;
         };

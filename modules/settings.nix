@@ -13,6 +13,11 @@ let
         };
         port = lib.mkOption {
           type = lib.types.int;
+          default = 0;
+        };
+        external = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
         };
         icon = lib.mkOption {
           type = lib.types.str;

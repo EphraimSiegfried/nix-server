@@ -31,7 +31,7 @@
         services.caddy = {
           enable = true;
           virtualHosts = lib.mkMerge (
-            lib.mapAttrsToList mkVhost config.webServices
+            lib.mapAttrsToList mkVhost (lib.filterAttrs (_: svc: !svc.external) config.webServices)
             ++ [
               {
                 "${if useTLS then "" else "http://"}*.${config.domain}" = {
