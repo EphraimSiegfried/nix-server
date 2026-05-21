@@ -9,15 +9,17 @@
     }:
     let
       mkHostname = svc:
-        if svc.subdomain == "@" then
-          config.domain
-        else
-          "${svc.subdomain}.${config.domain}";
+        let
+          host =
+            if svc.subdomain == "@" then
+              config.domain
+            else
+              "${svc.subdomain}.${config.domain}";
+        in
+        if useTLS then host else "http://${host}";
       mkVhost = _name: svc: {
         "${mkHostname svc}" = {
-          extraConfig =
-            lib.optionalString (!useTLS) "tls internal\n"
-            + "reverse_proxy http://localhost:${toString svc.port}";
+          extraConfig = "reverse_proxy http://localhost:${toString svc.port}";
         };
       };
     in
@@ -33,10 +35,8 @@
             lib.mapAttrsToList mkVhost config.webServices
             ++ [
               {
-                "*.${config.domain}" = {
-                  extraConfig =
-                    lib.optionalString (!useTLS) "tls internal\n"
-                    + ''
+                "${if useTLS then "" else "http://"}*.${config.domain}" = {
+                  extraConfig = ''
                       root * ${./web/notfound}
                       try_files {path} /index.html
                       file_server

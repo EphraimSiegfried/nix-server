@@ -32,7 +32,7 @@ in
           };
 
           domain = "localhost";
-          baseURL = "https://localhost:8443";
+          baseURL = "http://localhost:8080";
           services.getty.autologinUser = "root";
           virtualisation.vmVariant = {
             virtualisation.graphics = false;
