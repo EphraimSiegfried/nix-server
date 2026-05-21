@@ -54,9 +54,7 @@
           };
           email = config.admin.email;
           globalConfig = ''
-            acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN} {
-              resolvers 1.1.1.1 8.8.8.8
-            }
+            acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
             skip_install_trust
           '';
           environmentFile = config.sops.templates."caddy.env".path;

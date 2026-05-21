@@ -3,6 +3,10 @@
     { config, ... }:
     {
       networking.firewall.enable = true;
+      networking.nameservers = [
+        "1.1.1.1"
+        "8.8.8.8"
+      ];
 
       networking.wireguard.interfaces.olly-siegi-vpn = {
         ips = [ "10.100.0.2/24" ];
