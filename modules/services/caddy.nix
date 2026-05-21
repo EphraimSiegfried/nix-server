@@ -1,6 +1,8 @@
 {
   config.flake.factory.caddy =
-    { useTLS ? true }:
+    {
+      useTLS ? true,
+    }:
     {
       pkgs,
       lib,
@@ -8,13 +10,10 @@
       ...
     }:
     let
-      mkHostname = svc:
+      mkHostname =
+        svc:
         let
-          host =
-            if svc.subdomain == "@" then
-              config.domain
-            else
-              "${svc.subdomain}.${config.domain}";
+          host = if svc.subdomain == "@" then config.domain else "${svc.subdomain}.${config.domain}";
         in
         if useTLS then host else "http://${host}";
       mkVhost = _name: svc: {
@@ -37,10 +36,10 @@
               {
                 "${if useTLS then "" else "http://"}*.${config.domain}" = {
                   extraConfig = ''
-                      root * ${./web/notfound}
-                      try_files {path} /index.html
-                      file_server
-                    '';
+                    root * ${./web/notfound}
+                    try_files {path} /index.html
+                    file_server
+                  '';
                 };
               }
             ]
