@@ -24,6 +24,7 @@ in
       nextcloud
       prowlarr
       radarr
+      rb-scoreboard
       sonarr
       transmission
       paperless

@@ -22,6 +22,7 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     libix.url = "github:EphraimSiegfried/libix";
+    rb-scoreboard.url = "github:zenoli/rb-scoreboard";
   };
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }
