@@ -19,7 +19,7 @@
         category = "Sports";
       };
 
-      sops.secrets."rb-scoreboard/sm_api_key" = {
+      sops.secrets."rb-scoreboard/api_key" = {
         owner = "rb-scoreboard";
       };
       sops.secrets."rb-scoreboard/jwt_secret" = {
@@ -32,7 +32,7 @@
       sops.templates."rb-scoreboard.env" = {
         owner = "rb-scoreboard";
         content = ''
-          SM_API_KEY=${config.sops.placeholder."rb-scoreboard/sm_api_key"}
+          SM_API_KEY=${config.sops.placeholder."rb-scoreboard/api_key"}
           JWT_SECRET=${config.sops.placeholder."rb-scoreboard/jwt_secret"}
           ADMIN_API_KEY=${config.sops.placeholder."rb-scoreboard/admin_api_key"}
         '';
