@@ -50,7 +50,7 @@
         services.caddy = {
           package = pkgs.caddy.withPlugins {
             plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
-            hash = "sha256-V7UIuxnzgyzpQz+M3DFmII+J/Gf8H6qMlGZL8RKS7F0=";
+            hash = "sha256-Q0lgI8MY90u/5R/xXBVPQWCZBN7dUZ0kcuDxD0xd0fo=";
           };
           email = config.admin.email;
           globalConfig = ''

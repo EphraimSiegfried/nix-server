@@ -15,7 +15,7 @@
         name = "RB Scoreboard";
         subdomain = "rb";
         inherit port;
-        description = "Rugby scoreboard";
+        description = "RB Scoreboard";
         category = "Sports";
       };
 
