@@ -25,6 +25,7 @@
         mode = "640";
         owner = "systemd-network";
         group = "systemd-network";
+        restartUnits = [ "wireguard-olly-siegi-vpn.service" ];
       };
     };
 }
