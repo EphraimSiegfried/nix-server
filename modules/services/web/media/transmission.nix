@@ -30,6 +30,8 @@
           Restart = "on-failure";
           RestartSec = "10s";
         };
+        # Start transmission after wg comes up
+        postStart = "systemctl start --no-block transmission.service || true";
       };
       systemd.services.transmission = {
         after = [ "wg.service" ];
