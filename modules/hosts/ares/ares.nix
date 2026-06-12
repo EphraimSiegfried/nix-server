@@ -39,6 +39,7 @@ in
       siegi
       zenoli
       watchdog
+      caffeine
       {
         system.stateVersion = "23.11";
         networking.hostName = hostname;
