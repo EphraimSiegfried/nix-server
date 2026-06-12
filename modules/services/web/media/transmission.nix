@@ -33,7 +33,11 @@
       };
       systemd.services.transmission = {
         after = [ "wg.service" ];
-        requires = [ "wg.service" ];
+        bindsTo = [ "wg.service" ];
+        serviceConfig = {
+          Restart = "on-failure";
+          RestartSec = "15s";
+        };
       };
     };
 }
