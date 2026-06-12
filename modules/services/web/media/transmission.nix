@@ -35,5 +35,13 @@
         after = [ "wg.service" ];
         requires = [ "wg.service" ];
       };
+      # Ensure transmission starts after wg recovers from failure
+      systemd.services.transmission-kickstart = {
+        after = [ "wg.service" ];
+        requires = [ "wg.service" ];
+        wantedBy = [ "wg.service" ];
+        serviceConfig.Type = "oneshot";
+        script = "systemctl reset-failed transmission.service; systemctl start transmission.service";
+      };
     };
 }
