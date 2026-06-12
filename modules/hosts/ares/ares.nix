@@ -38,6 +38,7 @@ in
       ssh
       siegi
       zenoli
+      watchdog
       {
         system.stateVersion = "23.11";
         networking.hostName = hostname;
