@@ -30,6 +30,8 @@
           Restart = "on-failure";
           RestartSec = "10s";
         };
+        # Start transmission after wg comes up
+        postStart = "systemctl start --no-block transmission.service || true";
       };
       systemd.services.transmission = {
         after = [ "wg.service" ];
@@ -38,6 +40,14 @@
           Restart = "on-failure";
           RestartSec = "15s";
         };
+      };
+      # Ensure transmission starts after wg recovers from failure
+      systemd.services.transmission-kickstart = {
+        after = [ "wg.service" ];
+        requires = [ "wg.service" ];
+        wantedBy = [ "wg.service" ];
+        serviceConfig.Type = "oneshot";
+        script = "systemctl reset-failed transmission.service; systemctl start transmission.service";
       };
     };
 }
