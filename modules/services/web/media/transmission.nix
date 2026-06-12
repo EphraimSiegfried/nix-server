@@ -26,6 +26,10 @@
       systemd.services.wg = {
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
+        serviceConfig = {
+          Restart = "on-failure";
+          RestartSec = "10s";
+        };
       };
       systemd.services.transmission = {
         after = [ "wg.service" ];
