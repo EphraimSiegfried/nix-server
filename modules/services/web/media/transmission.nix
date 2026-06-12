@@ -23,8 +23,13 @@
           };
         };
       };
-      systemd.services.wg.serviceConfig = {
-        ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+      systemd.services.wg = {
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+      };
+      systemd.services.transmission = {
+        after = [ "wg.service" ];
+        requires = [ "wg.service" ];
       };
     };
 }
