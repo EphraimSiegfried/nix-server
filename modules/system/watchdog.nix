@@ -7,9 +7,9 @@
       "kernel.panic" = 10; # reboot 10 seconds after kernel panic
     };
     # systemd hardware watchdog: reboots if system is unresponsive for 30s
-    systemd.extraConfig = ''
-      RuntimeWatchdogSec=30
-      RebootWatchdogSec=10min
-    '';
+    systemd.settings.Manager = {
+      RuntimeWatchdogSec = "30";
+      RebootWatchdogSec = "2min";
+    };
   };
 }
