@@ -17,6 +17,7 @@
             allowedIPs = [ "10.100.0.1/32" ];
             endpoint = "siegi.internet-box.ch:51820";
             persistentKeepalive = 25;
+            dynamicEndpointRefreshSeconds = 30;
           }
         ];
       };
