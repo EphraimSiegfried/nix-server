@@ -249,11 +249,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1781282252,
-        "narHash": "sha256-ldXXDHtDWdSl6lfmDVm+GO3fNQaa8YfR8uOpOXQnG74=",
+        "lastModified": 1781366087,
+        "narHash": "sha256-sqjY3hdp5uHAXKCDOncYVbgooL6S7+Sy5OGnrvG1EF8=",
         "owner": "zenoli",
         "repo": "rb-scoreboard",
-        "rev": "8764fdc7a6f66bf1b84283be9fdd245f45d1e09f",
+        "rev": "659bf1b67c1eb72e5a47178d4d6a82e6c2bb589c",
         "type": "github"
       },
       "original": {
