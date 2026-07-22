@@ -1,4 +1,4 @@
-# ares crash investigation (2026-07-20)
+# ares crash investigation (2026-07-20, updated 2026-07-22)
 
 ## Symptom
 
@@ -83,28 +83,85 @@ Neither fires when the disk is returning `EIO` on every write but the kernel and
 PID1 are otherwise alive — which is exactly what happened here. This is why the
 box just sat there instead of self-recovering.
 
-## Action plan
+## Session findings 2026-07-22 (BIOS photo + SMART + Loki forensics)
 
-1. **Update the motherboard BIOS** (see steps below) — highest-leverage fix,
-   pulls in current Intel microcode and safe power-limit defaults.
-2. After updating, confirm the **"Performance Preferences"** BIOS setting is
-   **"Intel Default Settings"**, not an enhanced/OC profile.
-3. **Check the Loki instance** (`https://grafana.qew.ch`, `{host="ares"}`) around
-   a past crash timestamp for `mce`, `hardware error`, `nvme`, or
-   `blk_update_request` lines — logs are shipped there live via promtail before
-   local corruption happens, so the real trigger line may still be recoverable.
-4. **Add SMART monitoring** (`smartd` or a `smartctl_exporter`/textfile collector
-   feeding the existing Prometheus `node_exporter`) — currently zero visibility
-   into disk health.
-5. **Run `smartctl -a` / `nvme smart-log`** on the SSD to check `media_errors`,
-   `percentage_used`, `critical_warning` and close the loop on the secondhand
-   drive.
-6. **Add a storage-health watchdog** — a systemd timer that writes+fsyncs a test
-   file to `/` and force-reboots on failure, since the current watchdog module is
-   blind to this failure mode.
-7. Watch whether crashes recur after the BIOS fix. If they do, the CPU may
-   already be degraded and worth pursuing Intel's RMA program for affected
-   13th/14th-gen chips; if not, this was the whole story.
+### BIOS confirmed pre-fix (photo of BIOS Main screen)
+
+- **BIOS 0602, build 12/15/2023** — the board's *initial release* BIOS. Predates
+  every Raptor Lake fix: 0x125 (eTVB), 0x129 (voltage requests), 0x12B (idle
+  voltage/Vmin), 0x12F (Vmin), and ASUS's "Intel Default Settings" defaults
+  (BIOS 1658, May 2024). ME FW 16.1.30.2307.
+- **Core voltage 1.421 V at 53x/5300 MHz** visible in the BIOS hardware monitor —
+  the elevated-voltage behavior the microcode bug produces, observed directly.
+- RAM at JEDEC 4800 MHz / 1.120 V — **XMP is off**, RAM OC eliminated as a factor.
+- ASUS BIOS page confirms **direct flash 0602 → 1836 is supported** (no
+  intermediate version required; the CAP bundles the ME firmware update
+  16.1.30.2307 → 16.1.40.2765, which is one-way — ME stays updated even if the
+  BIOS is rolled back later).
+
+### SSD formally cleared (smartctl 2026-07-22)
+
+Samsung 990 PRO 4TB (S7DSNJ0X900973K), FW 4B2QJXD7:
+`Media and Data Integrity Errors: 0`, `Error Information Log Entries: 0`,
+`Critical Warning: 0x00`, spare 100%, 3% used, 10,377 POH, 41.9 TB written
+(rated 2,400 TBW), 86 unsafe shutdowns (scar tissue from the crashes themselves).
+
+Key inference: `journalctl --verify` found corrupted bytes on disk, but the
+drive has never recorded a single media error — so corruption entered the data
+**upstream of the drive** (CPU/memory path), or the EIO storm was the NVMe
+*link* dropping (also traceless at the media layer). Both point at the platform,
+not the SSD.
+
+### Loki forensics for the 2026-07-19 crash (gap 14:13–23:23 CEST)
+
+- Last shipped lines: **14:15:04 CEST**, mid `jellyseerr` Jellyfin-sync burst.
+- Two scheduled jobs (Download Sync + Recently Added Scan) started at exactly
+  **14:15:00** — death 4 seconds into an idle→load transition, the textbook
+  Vmin-instability trigger that 0x12B/0x12F address.
+- **Zero** `mce`/`nvme`/`ext4`/`blk_update` warnings in the hours before —
+  instant death, no degradation curve.
+- Structural note: Loki can never capture the actual trigger line — journald's
+  writes are the first casualty, so promtail has nothing to ship. tty photos are
+  the only record of the failure itself.
+
+### Decisions
+
+- **Storage-health watchdog (old item 6): dropped.** It treats the symptom, not
+  the cause, and auto-reboots would mask the "did the crashes stop?" signal we
+  need post-flash.
+- **smartctl exporter added** to `modules/services/monitoring/prometheus.nix`
+  (port 9003, scraping `/dev/nvme0n1` + `/dev/sda`, 60s interval) — permanent
+  disk-health visibility in Grafana.
+- **fsck + journal cleanup** folded into the flash downtime: `touch /forcefsck`
+  before the reboot; afterwards `journalctl --rotate` and delete journal files
+  flagged corrupt by `journalctl --verify`.
+- **Success criteria:** historical crash cadence was ~every 1–2 weeks (bursts of
+  every-other-day). **6 crash-free weeks (until ~2026-09-02) = cured.** Any
+  freeze after the flash (with Intel Default Settings confirmed) = the chip took
+  permanent Vmin damage during 13 months at elevated voltage → start Intel RMA
+  (14600K has 3-year warranty).
+
+## Action plan (status as of 2026-07-22)
+
+1. **Update the motherboard BIOS to 1836** (see steps below) — highest-leverage
+   fix, pulls in current Intel microcode and safe power-limit defaults.
+   ⏳ scheduled for today. Before the reboot: `sudo touch /forcefsck` so the
+   flash downtime includes a root-fs check. After boot: clean up corrupt journal
+   files (`journalctl --rotate`, delete files flagged by `journalctl --verify`).
+2. After updating, re-apply BIOS settings (flash resets NVRAM):
+   **Performance Preferences → Intel Default Settings**, Restore AC Power Loss →
+   Power On, fan curves, boot order, leave XMP off. ⏳
+3. ~~Check Loki around a past crash~~ ✅ done 2026-07-22 — see findings above.
+   No trigger line recoverable (journald dies first); timing evidence supports
+   the Vmin theory.
+4. ~~Add SMART monitoring~~ ✅ smartctl exporter added to `prometheus.nix`;
+   deploy with the next rebuild.
+5. ~~Run smartctl on the SSD~~ ✅ done 2026-07-22 — clean, SSD cleared.
+6. ~~Add a storage-health watchdog~~ ❌ dropped — treats symptom, masks the
+   post-flash recovery signal.
+7. Watch whether crashes recur after the BIOS fix: **6 crash-free weeks
+   (~2026-09-02) = cured**; any freeze → Intel RMA (chip likely has permanent
+   Vmin-shift degradation from 13 months at elevated voltage).
 
 ## BIOS/firmware upgrade steps (ASUS TUF GAMING B760M-PLUS II)
 

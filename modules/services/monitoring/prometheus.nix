@@ -16,6 +16,14 @@
             enabledCollectors = [ "systemd" ];
             port = 9002;
           };
+          smartctl = {
+            enable = true;
+            port = 9003;
+            devices = [
+              "/dev/nvme0n1"
+              "/dev/sda"
+            ];
+          };
         };
         scrapeConfigs = [
           {
@@ -24,6 +32,18 @@
             static_configs = [
               {
                 targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
+                labels = {
+                  instance = config.networking.hostName;
+                };
+              }
+            ];
+          }
+          {
+            job_name = "smartctl_exporter";
+            scrape_interval = "60s";
+            static_configs = [
+              {
+                targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.smartctl.port}" ];
                 labels = {
                   instance = config.networking.hostName;
                 };
