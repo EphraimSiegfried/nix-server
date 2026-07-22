@@ -143,14 +143,19 @@ not the SSD.
 
 ## Action plan (status as of 2026-07-22)
 
-1. **Update the motherboard BIOS to 1836** (see steps below) — highest-leverage
-   fix, pulls in current Intel microcode and safe power-limit defaults.
-   ⏳ scheduled for today. Before the reboot: `sudo touch /forcefsck` so the
-   flash downtime includes a root-fs check. After boot: clean up corrupt journal
-   files (`journalctl --rotate`, delete files flagged by `journalctl --verify`).
-2. After updating, re-apply BIOS settings (flash resets NVRAM):
-   **Performance Preferences → Intel Default Settings**, Restore AC Power Loss →
-   Power On, fan curves, boot order, leave XMP off. ⏳
+1. ~~Update the motherboard BIOS to 1836~~ ✅ flashed 2026-07-22 via EZ Flash
+   (stick needed a clean MBR + single FAT32 partition before EZ Flash saw it).
+   ME FW updated alongside. Post-boot check 2026-07-22 18:57: **microcode
+   revision 0x133** (well past the 0x12B/0x12F Vmin fixes) — the fix is live.
+   Root fsck at boot reported "clean" but note: NixOS stage-1 fsck runs `-a`,
+   which skips the deep scan when the clean bit is set (`/forcefsck` isn't
+   visible to stage-1 since / isn't mounted yet). Optional full check at a
+   future reboot: `tune2fs -c 1 /dev/nvme0n1p2`, reboot, then
+   `tune2fs -c -1 /dev/nvme0n1p2`. Still pending: journal cleanup
+   (`journalctl --rotate` + delete files flagged by `--verify`) and
+   `nixos-rebuild switch` to deploy the smartctl exporter.
+2. ~~Re-apply BIOS settings~~ ✅ 2026-07-22: **Intel Default Settings** selected,
+   Restore AC Power Loss → Power On, fan curves re-applied, XMP left off.
 3. ~~Check Loki around a past crash~~ ✅ done 2026-07-22 — see findings above.
    No trigger line recoverable (journald dies first); timing evidence supports
    the Vmin theory.
