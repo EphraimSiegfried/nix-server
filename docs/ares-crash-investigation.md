@@ -1,4 +1,4 @@
-# ares crash investigation (2026-07-20, updated 2026-07-22)
+# ares crash investigation (2026-07-20, updated 2026-07-25)
 
 ## Symptom
 
@@ -141,19 +141,96 @@ not the SSD.
   permanent Vmin damage during 13 months at elevated voltage → start Intel RMA
   (14600K has 3-year warranty).
 
+## Session findings 2026-07-25 (first post-flash crash — theory pivot)
+
+### The crash
+
+Box froze again **2026-07-25 ~14:16 CEST**, 2.7 days into the first post-flash
+boot (Jul 22 21:20 → Jul 25 14:16:03). Microcode 0x133 + Intel Default Settings
+confirmed active during the crashed boot — **the crash survived the Raptor Lake
+fix**, so the doc's old criterion said "Intel RMA". But the new evidence points
+elsewhere.
+
+### New evidence (tty photo, `~/Downloads/ares-logs-2.jpg`)
+
+Unlike earlier crashes (journald EIO only), this photo shows **kernel
+block-layer errors**:
+
+- `Buffer I/O error on dev nvme0n1p2`
+- `EXT4-fs (nvme0n1p2): I/O error` writing to the journal
+
+i.e. the whole NVMe device stopped answering — the signature of the
+**controller dropping off the bus**, not of a CPU miscomputing. Supporting
+facts:
+
+- SMART still pristine post-crash: 0 media errors, 0 critical warnings — a
+  link/controller drop is invisible at the media layer.
+- fsck on reboot: one orphaned inode cleared, metadata otherwise fine.
+- ASPM is disabled by the BIOS (`FADT declares the system doesn't support PCIe
+  ASPM`) — but NVMe **APST** (drive-autonomous power states, the classic
+  Samsung-on-desktop dropout culprit) was fully active
+  (`default_ps_max_latency_us=100000`).
+- Both crashes died within ~60 s after :15:00 (14:15:04 and 14:16:03), both
+  mid media-scan burst at an idle→busy transition — consistent with a
+  failed wake from a deep power state. (Weak on its own: jellyseerr syncs
+  every 5 min, so bursts cover much of wall-clock time.)
+
+### Logging is structurally blind — confirmed again
+
+- On-disk journal for the crashed boot ends 14:16:03 (Sonarr import lines);
+  the first kernel NVMe error was never persisted (journald's own writes are
+  the first casualty).
+- Loki shipped ~4 s past the journal (until 14:16:07, app noise only) — zero
+  kernel lines. Grep for `nvme|Buffer I/O|EXT4-fs|controller` in the window
+  returns nothing.
+- Console login during the freeze impossible: VT switch works (kernel alive)
+  but getty can't exec `agetty` from the dead root fs — no prompt ever appears.
+- **Only netconsole (kernel printk over raw UDP, below the network stack) can
+  capture the first error line.** Requires an always-on LAN/routable receiver;
+  WireGuard tunnels can't carry it. Deferred for now (no suitable receiver).
+
+### Leading suspect (revised): NVMe APST dropout
+
+The drive autonomously enters deep low-power states when idle; on some
+drive+board combos the wake handshake occasionally fails and the drive never
+comes back — total silence, no SMART traces, box frozen with a dead root fs.
+Matches every observation. CPU Vmin-degradation theory demoted but not dead:
+it can't naturally explain a vanished block device, and the microcode fix
+demonstrably didn't stop the crashes.
+
+### Decisions 2026-07-25
+
+- **Intel RMA on hold** — don't RMA a possibly-healthy CPU while a cheaper,
+  better-fitting suspect is untested.
+- **APST disabled** via new module `modules/system/nvme-apst.nix`
+  (`nvme_core.default_ps_max_latency_us=0`), imported by ares. Requires
+  reboot. Verify post-reboot:
+  `cat /sys/module/nvme_core/parameters/default_ps_max_latency_us` → `0`.
+- **Netconsole deferred** — revisit immediately if any crash happens with APST
+  off (without it we stay blind to the trigger line).
+- **Success clock reset:** 6 crash-free weeks from 2026-07-25 →
+  **~2026-09-05 = APST dropout confirmed cured.** Any freeze with APST off →
+  set up netconsole (mandatory before further conclusions) and/or hardware
+  bisect (different drive / other M.2 slot); CPU RMA only if netconsole shows
+  corruption with the drive still responsive.
+
 ## Action plan (status as of 2026-07-22)
 
 1. ~~Update the motherboard BIOS to 1836~~ ✅ flashed 2026-07-22 via EZ Flash
    (stick needed a clean MBR + single FAT32 partition before EZ Flash saw it).
    ME FW updated alongside. Post-boot check 2026-07-22 18:57: **microcode
    revision 0x133** (well past the 0x12B/0x12F Vmin fixes) — the fix is live.
-   Root fsck at boot reported "clean" but note: NixOS stage-1 fsck runs `-a`,
-   which skips the deep scan when the clean bit is set (`/forcefsck` isn't
-   visible to stage-1 since / isn't mounted yet). Optional full check at a
-   future reboot: `tune2fs -c 1 /dev/nvme0n1p2`, reboot, then
-   `tune2fs -c -1 /dev/nvme0n1p2`. Still pending: journal cleanup
-   (`journalctl --rotate` + delete files flagged by `--verify`) and
-   `nixos-rebuild switch` to deploy the smartctl exporter.
+   Voltage behavior verified healthy post-flash via MSR 0x198 sampling
+   (2026-07-22): idle VID drops to ~0.77 V, boost peaks 1.42 V at 5.3 GHz,
+   no excursions — proper voltage/frequency scaling (pre-fix the BIOS showed
+   1.421 V standing).
+   Deep fsck done same evening via the `tune2fs -c 1` + reboot trick
+   (`/forcefsck` doesn't reach NixOS stage-1): **full scan clean** — 3.6M files,
+   0 errors, only cosmetic "extent tree could be narrower" notices. The crash
+   corruption was confined to journal file contents; ext4 metadata intact.
+   smartctl exporter deployed and verified reporting both drives.
+   Still pending: journal cleanup (`journalctl --rotate` + delete files flagged
+   by `--verify`).
 2. ~~Re-apply BIOS settings~~ ✅ 2026-07-22: **Intel Default Settings** selected,
    Restore AC Power Loss → Power On, fan curves re-applied, XMP left off.
 3. ~~Check Loki around a past crash~~ ✅ done 2026-07-22 — see findings above.
@@ -164,9 +241,16 @@ not the SSD.
 5. ~~Run smartctl on the SSD~~ ✅ done 2026-07-22 — clean, SSD cleared.
 6. ~~Add a storage-health watchdog~~ ❌ dropped — treats symptom, masks the
    post-flash recovery signal.
-7. Watch whether crashes recur after the BIOS fix: **6 crash-free weeks
-   (~2026-09-02) = cured**; any freeze → Intel RMA (chip likely has permanent
-   Vmin-shift degradation from 13 months at elevated voltage).
+7. ~~Watch whether crashes recur after the BIOS fix~~ ❌ superseded — crashed
+   again 2026-07-25 despite microcode 0x133. See "Session findings 2026-07-25":
+   RMA on hold, APST now the leading suspect.
+8. Deploy `nvme-apst` module + reboot; verify
+   `default_ps_max_latency_us` reads `0` afterwards.
+9. Journal cleanup (still pending, now includes today's corruption):
+   `journalctl --verify`, then `journalctl --rotate` and delete flagged files.
+10. Watch for recurrence with APST off: **6 crash-free weeks (~2026-09-05) =
+    cured.** Any freeze → netconsole becomes mandatory, then hardware bisect /
+    CPU RMA per the netconsole verdict.
 
 ## BIOS/firmware upgrade steps (ASUS TUF GAMING B760M-PLUS II)
 

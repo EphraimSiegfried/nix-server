@@ -40,6 +40,7 @@ in
       zenoli
       watchdog
       caffeine
+      nvme-apst
       {
         system.stateVersion = "23.11";
         networking.hostName = hostname;
