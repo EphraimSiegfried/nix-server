@@ -15,9 +15,8 @@
           {
             publicKey = "8L3Cwpj1cRznCJ8zzV9//6EWQ20NCGAQWAFUO4bK4h8=";
             allowedIPs = [ "10.100.0.1/32" ];
-            endpoint = "siegi.internet-box.ch:51820";
+            endpoint = "192.168.1.114:51820";
             persistentKeepalive = 25;
-            dynamicEndpointRefreshSeconds = 30;
           }
         ];
       };
