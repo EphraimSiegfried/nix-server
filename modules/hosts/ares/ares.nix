@@ -15,6 +15,7 @@ in
       bazarr
       docuseal
       external
+      github-runner
       homepage
       jellyfin
       jellyseerr
