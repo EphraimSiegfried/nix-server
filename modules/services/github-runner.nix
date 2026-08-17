@@ -1,25 +1,34 @@
 {
   flake.modules.nixos.github-runner =
     { config, pkgs, ... }:
-    {
-      # Fine-grained PAT scoped to PartnefyUNGA/partnefy with
-      # "Administration: read & write" — exchanged for short-lived
-      # registration tokens on every (ephemeral) re-registration.
-      sops.secrets.github-runner-token = { };
-
-      services.github-runners.partnefy = {
+    let
+      runner = url: tokenSecret: {
         enable = true;
         # One job per registration, fresh work dir every time; the nix store
         # persists via the host daemon, which is where the speed comes from.
         ephemeral = true;
         replace = true;
-        url = "https://github.com/PartnefyUNGA/partnefy";
-        tokenFile = config.sops.secrets.github-runner-token.path;
+        inherit url;
+        tokenFile = config.sops.secrets.${tokenSecret}.path;
         extraPackages = with pkgs; [
           devenv
           git # actions/checkout
           jq # used outside the devenv shell in publish-search-worker
         ];
+      };
+    in
+    {
+      # Fine-grained PATs with "Administration: read & write" on the target
+      # repo — exchanged for short-lived registration tokens on every
+      # (ephemeral) re-registration.
+      sops.secrets = {
+        github-runner-token = { };
+        github-runner-token-zenix = { };
+      };
+
+      services.github-runners = {
+        partnefy = runner "https://github.com/PartnefyUNGA/partnefy" "github-runner-token";
+        zenix = runner "https://github.com/zenoli/zenix" "github-runner-token-zenix";
       };
 
       nix = {
