@@ -1,7 +1,12 @@
 { inputs, ... }:
 {
   flake.modules.nixos.github-runner =
-    { config, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       # devenv moves faster than nixos stable — take it from unstable so the
       # CLI driving CI stays close to what developers run locally.
@@ -25,19 +30,17 @@
       # Fine-grained PATs with "Administration: read & write" on the target
       # repo — exchanged for short-lived registration tokens on every
       # (ephemeral) re-registration.
-      sops.secrets = {
-        github-runner-token = { };
-        github-runner-token-zenix = { };
-      };
+      sops.secrets.github-runner-token = { };
 
       # CI jobs run prebuilt binaries from npm (e.g. workerd via miniflare)
       # that expect an FHS dynamic loader at /lib64/ld-linux-x86-64.so.2.
       programs.nix-ld.enable = true;
 
-      services.github-runners = {
-        partnefy = runner "https://github.com/PartnefyUNGA/partnefy" "github-runner-token";
-        zenix = runner "https://github.com/zenoli/zenix" "github-runner-token-zenix";
-      };
+      # Each instance runs one job at a time; four allow the test and publish
+      # workflows of a few pushes to run concurrently.
+      services.github-runners = lib.genAttrs (map (i: "partnefy-${toString i}") (lib.range 1 4)) (
+        _: runner "https://github.com/PartnefyUNGA/partnefy" "github-runner-token"
+      );
 
       nix = {
         # CI builds only get CPU/IO when no other service wants it.
