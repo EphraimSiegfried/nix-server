@@ -30,6 +30,10 @@
         github-runner-token-zenix = { };
       };
 
+      # CI jobs run prebuilt binaries from npm (e.g. workerd via miniflare)
+      # that expect an FHS dynamic loader at /lib64/ld-linux-x86-64.so.2.
+      programs.nix-ld.enable = true;
+
       services.github-runners = {
         partnefy = runner "https://github.com/PartnefyUNGA/partnefy" "github-runner-token";
         zenix = runner "https://github.com/zenoli/zenix" "github-runner-token-zenix";
