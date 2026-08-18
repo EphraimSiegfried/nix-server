@@ -1,7 +1,11 @@
+{ inputs, ... }:
 {
   flake.modules.nixos.github-runner =
     { config, pkgs, ... }:
     let
+      # devenv moves faster than nixos stable — take it from unstable so the
+      # CLI driving CI stays close to what developers run locally.
+      devenv = inputs.nixpkgs_unstable.legacyPackages.${pkgs.system}.devenv;
       runner = url: tokenSecret: {
         enable = true;
         # One job per registration, fresh work dir every time; the nix store
@@ -10,10 +14,10 @@
         replace = true;
         inherit url;
         tokenFile = config.sops.secrets.${tokenSecret}.path;
-        extraPackages = with pkgs; [
+        extraPackages = [
           devenv
-          git # actions/checkout
-          jq # used outside the devenv shell in publish-search-worker
+          pkgs.git # actions/checkout
+          pkgs.jq # used outside the devenv shell in publish-search-worker
         ];
       };
     in
