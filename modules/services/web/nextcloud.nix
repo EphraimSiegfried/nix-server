@@ -20,7 +20,7 @@
 
       services.nextcloud = {
         enable = true;
-        package = pkgs.nextcloud32;
+        package = pkgs.nextcloud33;
         hostName = "${subdomain}.${config.domain}";
         home = "${config.locations.data}/nextcloud";
         maxUploadSize = "16G";

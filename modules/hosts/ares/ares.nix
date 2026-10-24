@@ -29,7 +29,7 @@ in
       transmission
       paperless
       prometheus
-      promtail
+      alloy
       vaultwarden
       nix
       networking
