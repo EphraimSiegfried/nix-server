@@ -23,6 +23,20 @@
           };
         };
       };
+      # nixarr creates the torrent category dirs as 0755, so the *arr services
+      # (group "media") can't delete files after importing them. Radarr then
+      # loops forever: it deletes the library copy, re-copies the download, and
+      # fails to remove the source. `z` adjusts the mode after nixarr's `d`
+      # rules without conflicting with them; setgid keeps new entries in "media".
+      systemd.tmpfiles.rules = map (dir: "z '${config.nixarr.mediaDir}/torrents/${dir}' 2775 - - - -") [
+        "manual"
+        "lidarr"
+        "radarr"
+        "sonarr"
+        "readarr"
+        "shelfmark"
+      ];
+
       systemd.services.wg = {
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];

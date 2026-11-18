@@ -46,6 +46,8 @@ in
         networking.hostName = hostname;
         time.timeZone = "Europe/Zurich";
         i18n.defaultLocale = "en_US.UTF-8";
+        # Super I/O chip on the TUF B760M-PLUS II; exposes fan speeds and PWM via hwmon
+        boot.kernelModules = [ "nct6775" ];
       }
     ];
   };
